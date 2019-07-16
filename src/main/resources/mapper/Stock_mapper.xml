@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lb.miaosha.dao.StockMapper">
+    <resultMap id="Base_Map" type="com.lb.miaosha.dto.Stock">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="product_id" jdbcType="BIGINT" property="productId"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="stock" jdbcType="BIGINT" property="stockNum"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+    </resultMap>
+
+    <sql id="Bae_Column_List">
+        id, product_id, product_name, stock, price
+    </sql>
+
+    <select id="getStockBySid" parameterType="Long" resultMap="Base_Map">
+        select
+        <include refid="Bae_Column_List"/>
+        from stock
+        where
+        <if test="id != null">
+            id = #{id}
+        </if>
+    </select>
+    <select id="getListStock" parameterType="Long" resultMap="Base_Map">
+        select
+        <include refid="Bae_Column_List"/>
+        from stock
+    </select>
+
+    <insert id="insert" parameterType="com.lb.miaosha.dto.Stock">
+        <selectKey keyColumn="id" order="AFTER" resultType="Long">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into stock(product_id, product_name, stock, price)
+        values (#{productId}, #{productName}, #{stock}, #{price})
+    </insert>
+
+    <update id="update" parameterType="Long">
+        update stock set stock = stock - 1 where id = #{id}
+    </update>
+</mapper>
